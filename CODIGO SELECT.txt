@@ -1,0 +1,61 @@
+using (var consult = services.BuildServiceProvider().CreateScope())
+{
+    //La misma logica del using anterior , solo que aqui le pide ingresar el ID del cliente
+    var dbContext = consult.ServiceProvider.GetRequiredService<SqlDbContext>();
+    dbContext.Database.EnsureCreated();
+    var customerRepository = consult.ServiceProvider.GetRequiredService<IConcreteRepository>();
+
+    Console.WriteLine("Ingrese el cliente que deseea buscar: ");
+    string CustomerID = Console.ReadLine();
+    //Error solucionado  
+    var customer = customerRepository.FindOneAsync(CustomerID).Result;
+
+    if (customer != null)
+    {
+        Console.WriteLine(" ________________________________________________________");
+        Console.WriteLine(" |          Se ha encontrado un cliente con exito        |");
+        Console.WriteLine($"ID : {customer.Id}");
+        Console.WriteLine($"Cuil/Cuit: {customer.CuilCuit}");
+        Console.WriteLine($"DNI: {customer.DocumentNumber}");
+        Console.WriteLine($"Email: {customer.Email}");
+        Console.WriteLine($"Confimacion de email: {customer.EmailConfirmed}");
+        Console.WriteLine($"Nombre: {customer.Name}");
+        Console.WriteLine($"Apellido: {customer.LastName}");
+        Console.WriteLine($"Estado: {customer.Status}");
+        Console.WriteLine(" --------------------------------------------------------");
+    }
+    else
+    {
+        Console.WriteLine("El cliente no ha sido encontrado");
+    }
+
+}
+-----------------------
+using(var scope = services.BuildServiceProvider().CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<SqlDbContext>();
+    dbContext.Database.EnsureCreated();
+    var customerRepository = scope.ServiceProvider.GetRequiredService<IConcreteRepository>();
+
+    var AllCustomers = customerRepository.FindAll();
+    if(AllCustomers.Any())
+    {
+        foreach(var OneCustomer in AllCustomers)
+        {
+            Console.WriteLine(" ________________________________________________________");
+            Console.WriteLine($"ID : {OneCustomer.Id}");
+            Console.WriteLine($"Cuil/Cuit: {OneCustomer.CuilCuit}");
+            Console.WriteLine($"DNI: {OneCustomer.DocumentNumber}");
+            Console.WriteLine($"Email: {OneCustomer.Email}");
+            Console.WriteLine($"Confimacion de email: {OneCustomer.EmailConfirmed}");
+            Console.WriteLine($"Nombre: {OneCustomer.Name}");
+            Console.WriteLine($"Apellido: {OneCustomer.LastName}");
+            Console.WriteLine($"Estado: {OneCustomer.Status}");
+            Console.WriteLine(" --------------------------------------------------------");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Lamentablemente , no existen los clientes correspondientes");
+    }
+}
